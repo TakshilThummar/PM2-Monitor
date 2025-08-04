@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PM2 Log Monitoring</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>PM2 Services</h1>
+
+    <div class="service-selector">
+      <label for="service">Select Service:</label>
+      <select id="service">
+        <option value="">Select a service</option>
+      </select>
+    </div>
+<div class="flush-button">
+      <button id="flushButton">PM2 Flush</button>
+    </div>
+
+    <div class="log-type">
+      <label><input type="radio" name="logType" value="out" checked> Access Log</label>
+      <label><input type="radio" name="logType" value="error"> Error Log</label>
+    </div>
+ <button id="restartButton">Restart Selected Service</button>
+    <div class="console">
+      <pre id="logContent"></pre>
+    </div>
+
+
+    <script src="script.js"></script>
+  </div>
+</body>
+</html>
