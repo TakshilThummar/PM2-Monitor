@@ -11,9 +11,9 @@ app.use(express.static('public'));
 
 // Basic Authentication Middleware
 app.use(basicAuth({
-    users: { 'admin': 'password' }, // Replace with your username and password
-    challenge: true,
-    unauthorizedResponse: (req) => 'Unauthorized'
+  users: { 'admin': 'password' }, // Replace with your username and password
+  challenge: true,
+  unauthorizedResponse: (req) => 'Unauthorized'
 }));
 
 // Get the list of all running PM2 services
@@ -77,7 +77,7 @@ app.post('/restart/:service', (req, res) => {
       res.json({ message: `${service} restarted successfully` });
     });
   });
-}); 
+});
 const port = 5000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

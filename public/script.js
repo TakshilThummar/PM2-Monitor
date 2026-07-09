@@ -4,7 +4,7 @@ let selectedLogType = 'out';
 const logContent = document.getElementById('logContent');
 const logTitle = document.getElementById('logTitle');
 
-window.onload = async function() {
+window.onload = async function () {
   await fetchServices();
   initializeDropdowns();
   setInterval(fetchLogs, 2000);
@@ -32,17 +32,17 @@ function initializeDropdowns() {
     }
   });
 
-  document.getElementById('flushButton').addEventListener('click', function() {
+  document.getElementById('flushButton').addEventListener('click', function () {
     if (!selectedService) {
       alert('Please select a service to flush logs.');
       return;
     }
     fetch(`/pm2/flush/${selectedService}`, { method: 'POST' })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.success ? `${selectedService} logs flushed successfully!` : `Failed to flush ${selectedService} logs.`);
-    })
-    .catch(() => alert('An error occurred while flushing logs.'));
+      .then(response => response.json())
+      .then(data => {
+        alert(data.success ? `${selectedService} logs flushed successfully!` : `Failed to flush ${selectedService} logs.`);
+      })
+      .catch(() => alert('An error occurred while flushing logs.'));
   });
 
   document.getElementById('restartButton').addEventListener('click', async () => {
@@ -103,15 +103,15 @@ async function fetchServices() {
     const response = await fetch('/services');
     const services = await response.json();
     const serviceOptions = document.getElementById('serviceOptions');
-    
+
     serviceOptions.innerHTML = '<div class="dropdown-option" data-value="">Choose a service...</div>';
-    
+
     services.forEach(service => {
       const option = document.createElement('div');
       option.className = 'dropdown-option';
       option.dataset.value = service.name;
       option.innerHTML = `<i class="fas fa-${service.status === 'online' ? 'play-circle' : 'stop-circle'}"></i>${service.name} (ID: ${service.id}) - ${service.status}`;
-      
+
       option.addEventListener('click', () => {
         selectedService = service.name;
         document.getElementById('serviceDropdown').querySelector('.selected-text').textContent = option.textContent;
@@ -121,7 +121,7 @@ async function fetchServices() {
         updateLogTitle();
         fetchLogs();
       });
-      
+
       serviceOptions.appendChild(option);
     });
   } catch (error) {
