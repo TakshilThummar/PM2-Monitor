@@ -6,7 +6,7 @@ let selectedLogType = 'out';
 let pollInterval = null;
 let logFetchController = null; // AbortController for in-flight log requests
 
-// ── DOM refs (cached once, not queried on every event) ────
+// ── DOM refs (cached once) ────────────────────────────────
 const logContent = document.getElementById('logContent');
 const logTitle = document.getElementById('logTitle');
 const serviceDropdown = document.getElementById('serviceDropdown');
@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (document.hidden) {
       stopPolling();
     } else {
-      fetchLogs(); // immediate refresh on tab focus
+      fetchLogs();
       startPolling();
     }
   });
@@ -52,7 +52,6 @@ function stopPolling() {
 
 // ── Controls ──────────────────────────────────────────────
 function initializeControls() {
-  // Service dropdown
   serviceDropdown.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleDropdown();
@@ -64,7 +63,6 @@ function initializeControls() {
     }
   });
 
-  // Log type radio buttons
   document.querySelectorAll('input[name="logType"]').forEach((radio) => {
     radio.addEventListener('change', (e) => {
       selectedLogType = e.target.value;
@@ -73,13 +71,8 @@ function initializeControls() {
     });
   });
 
-  // Restart button
   restartBtn.addEventListener('click', handleRestart);
-
-  // Flush button
   document.getElementById('flushButton').addEventListener('click', handleFlush);
-
-  // Download button
   document.getElementById('downloadLogBtn').addEventListener('click', handleDownload);
 }
 
@@ -89,10 +82,8 @@ async function handleRestart() {
     showToast('Please select a service to restart.', 'warning');
     return;
   }
-
   restartBtn.disabled = true;
   restartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Restarting...';
-
   try {
     const response = await fetch(`/restart/${selectedService}`, { method: 'POST' });
     const data = await response.json();
@@ -114,7 +105,6 @@ function handleFlush() {
     showToast('Please select a service to flush logs.', 'warning');
     return;
   }
-
   fetch(`/pm2/flush/${selectedService}`, { method: 'POST' })
     .then((res) => res.json())
     .then((data) => {
@@ -133,13 +123,11 @@ function handleDownload() {
     showToast('Please select a service to download logs.', 'warning');
     return;
   }
-
   const logText = logContent.textContent;
   if (!logText || logText.startsWith('Initializing') || logText === '--- Logs flushed ---') {
     showToast('No logs available to download.', 'warning');
     return;
   }
-
   const blob = new Blob([logText], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -193,7 +181,6 @@ async function fetchServices() {
         <span>${service.name}</span>
         <span style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);">${service.status}</span>
       `;
-
       option.addEventListener('click', () => {
         selectedService = service.name;
         serviceDropdown.querySelector('.selected-text').textContent = service.name;
@@ -203,7 +190,6 @@ async function fetchServices() {
         updateLogTitle();
         fetchLogs();
       });
-
       fragment.appendChild(option);
     });
 
@@ -219,9 +205,7 @@ async function fetchLogs() {
   if (!selectedService) return;
 
   // Cancel any previous in-flight request before starting a new one
-  if (logFetchController) {
-    logFetchController.abort();
-  }
+  if (logFetchController) logFetchController.abort();
   logFetchController = new AbortController();
 
   try {
@@ -230,13 +214,10 @@ async function fetchLogs() {
       { signal: logFetchController.signal }
     );
     const data = await response.json();
-
     if (data.logs !== undefined) {
       const wasAtBottom = logContent.scrollHeight - logContent.scrollTop <= logContent.clientHeight + 50;
       logContent.textContent = data.logs || '--- Log file is empty ---';
-      if (wasAtBottom) {
-        logContent.scrollTop = logContent.scrollHeight;
-      }
+      if (wasAtBottom) logContent.scrollTop = logContent.scrollHeight;
     }
   } catch (err) {
     if (err.name !== 'AbortError') {
@@ -260,17 +241,12 @@ function showToast(message, type = 'info') {
     container.id = 'toast-container';
     document.body.appendChild(container);
   }
-
   const icon = TOAST_ICONS[type] || 'info-circle';
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
-
   container.appendChild(toast);
-
-  // Trigger animation on next frame
   requestAnimationFrame(() => toast.classList.add('show'));
-
   setTimeout(() => {
     toast.classList.remove('show');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });

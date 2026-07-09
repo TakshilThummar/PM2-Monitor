@@ -9,10 +9,7 @@ const app = express();
 const PORT = 5000;
 
 // ── Input validation ──────────────────────────────────────
-// Allowlist: only permit service names that are safe for shell usage.
-// Prevents shell injection via crafted service names.
 const SAFE_NAME_RE = /^[a-zA-Z0-9_\-\.]+$/;
-
 function isValidServiceName(name) {
   return typeof name === 'string' && SAFE_NAME_RE.test(name);
 }
@@ -21,9 +18,11 @@ function isValidServiceName(name) {
 app.use(express.static('public'));
 app.use(express.json());
 
+// HTTP Basic Auth — browser handles the credential dialog natively.
+// The browser caches credentials for the session; no tokens needed.
 app.use(basicAuth({
   users: { 'admin': 'password' }, // Replace with your credentials
-  challenge: true,
+  challenge: true,                // Sends WWW-Authenticate header to trigger browser dialog
   unauthorizedResponse: () => 'Unauthorized',
 }));
 
@@ -49,15 +48,13 @@ app.get('/services', (req, res) => {
 });
 
 // ── GET /logs/:service/:type ──────────────────────────────
-// Streams only the last 1000 lines via `tail` to keep memory usage constant,
-// regardless of how large the log file grows.
+// Streams only the last 1000 lines via `tail` to keep memory
+// usage constant regardless of log file size.
 app.get('/logs/:service/:type', (req, res) => {
   const { service, type } = req.params;
-
   if (!isValidServiceName(service)) {
     return res.status(400).json({ error: 'Invalid service name' });
   }
-
   const logType = type === 'error' ? 'error' : 'out';
   const logPath = `/home/hlink/.pm2/logs/${service}-${logType}.log`;
 
@@ -72,11 +69,9 @@ app.get('/logs/:service/:type', (req, res) => {
 // ── POST /pm2/flush/:service ──────────────────────────────
 app.post('/pm2/flush/:service', (req, res) => {
   const { service } = req.params;
-
   if (!isValidServiceName(service)) {
     return res.status(400).json({ error: 'Invalid service name' });
   }
-
   exec(`pm2 flush "${service}"`, (error, stdout, stderr) => {
     if (error) {
       console.error(`[flush] Error for "${service}":`, stderr);
@@ -91,11 +86,9 @@ app.post('/pm2/flush/:service', (req, res) => {
 // API for long-running server processes.
 app.post('/restart/:service', (req, res) => {
   const { service } = req.params;
-
   if (!isValidServiceName(service)) {
     return res.status(400).json({ error: 'Invalid service name' });
   }
-
   exec(`pm2 restart "${service}"`, (error, stdout, stderr) => {
     if (error) {
       console.error(`[restart] Error for "${service}":`, stderr);
