@@ -465,9 +465,12 @@ body {
   line-height: 1.7;
   color: var(--log-text);
   min-height: 0;
+  /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
-/* Log console scrollbar */
+/* Log console scrollbar (Webkit) */
 .console::-webkit-scrollbar {
   width: 6px;
 }
@@ -478,7 +481,7 @@ body {
 }
 
 .console::-webkit-scrollbar-thumb {
-  background: rgba(248, 245, 245, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   transition: background 0.2s ease;
 }
@@ -489,11 +492,6 @@ body {
 
 .console::-webkit-scrollbar-thumb:active {
   background: rgba(255, 255, 255, 0.4);
-}
-
-.console {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
 pre {
