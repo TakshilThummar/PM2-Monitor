@@ -1,35 +1,101 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PM2 Log Monitoring</title>
+  <title>PM2 Monitor Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1>PM2 Services</h1>
+  <div class="dashboard">
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-server"></i>
+          <h1>PM2 Monitor</h1>
+        </div>
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Connected</span>
+        </div>
+      </div>
+    </header>
 
-    <div class="service-selector">
-      <label for="service">Select Service:</label>
-      <select id="service">
-        <option value="">Select a service</option>
-      </select>
-    </div>
-<div class="flush-button">
-      <button id="flushButton">PM2 Flush</button>
-    </div>
+    <main class="main-content">
+      <div class="control-panel">
+        <div class="control-group">
+          <div class="custom-dropdown">
+            <label class="dropdown-label">
+              <i class="fas fa-cogs"></i>
+              Select Service
+            </label>
+            <div class="dropdown-container">
+              <div class="dropdown-selected" id="serviceDropdown">
+                <span class="selected-text">Choose a service...</span>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+              </div>
+              <div class="dropdown-options" id="serviceOptions" style="z-index: 999999 !important; position: absolute !important; top: calc(100% + 8px) !important; bottom: auto !important;">
+                <div class="dropdown-option" data-value="">Choose a service...</div>
+              </div>
+            </div>
+          </div>
 
-    <div class="log-type">
-      <label><input type="radio" name="logType" value="out" checked> Access Log</label>
-      <label><input type="radio" name="logType" value="error"> Error Log</label>
-    </div>
- <button id="restartButton">Restart Selected Service</button>
-    <div class="console">
-      <pre id="logContent"></pre>
-    </div>
+          <div class="radio-group-container">
+            <label class="dropdown-label">
+              <i class="fas fa-file-alt"></i>
+              Log Type
+            </label>
+            <div class="custom-radio-group">
+              <label class="radio-option">
+                <input type="radio" name="logType" value="out" checked>
+                <div class="radio-btn">
+                  <i class="fas fa-list"></i>
+                  <span>Access Log</span>
+                </div>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="logType" value="error">
+                <div class="radio-btn">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <span>Error Log</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
 
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="restartButton">
+            <i class="fas fa-redo"></i>
+            Restart Service
+          </button>
+          <button class="btn btn-secondary" id="flushButton">
+            <i class="fas fa-broom"></i>
+            Flush Logs
+          </button>
+        </div>
+      </div>
 
-    <script src="script.js"></script>
+      <div class="log-viewer">
+        <div class="log-header">
+          <div class="log-title">
+            <i class="fas fa-terminal"></i>
+            <span id="logTitle">Console Output</span>
+          </div>
+          <div class="log-controls">
+            <button class="btn-icon" id="downloadLogBtn" title="Download Logs">
+              <i class="fas fa-download"></i>
+            </button>
+          </div>
+        </div>
+        <div class="console">
+          <pre id="logContent">Select a service to view logs...</pre>
+        </div>
+      </div>
+    </main>
   </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

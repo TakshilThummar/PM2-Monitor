@@ -41,7 +41,7 @@ app.get('/services', (req, res) => {
 app.get('/logs/:service/:type', (req, res) => {
   const { service, type } = req.params;
   const logType = type === 'error' ? 'error' : 'out';
-  const logPath = `/home/ubuntu/.pm2/logs/${service}-${logType}.log`; // Adjust the log path if needed
+  const logPath = `/home/hlink/.pm2/logs/${service}-${logType}.log`; // Adjust the log path if needed
 
   fs.readFile(logPath, 'utf8', (err, data) => {
     if (err) {
@@ -51,8 +51,9 @@ app.get('/logs/:service/:type', (req, res) => {
   });
 });
 
-app.post('/pm2/flush', (req, res) => {
-  exec('pm2 flush', (error, stdout, stderr) => {
+app.post('/pm2/flush/:service', (req, res) => {
+  const { service } = req.params;
+  exec(`pm2 flush ${service}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${stderr}`);
       return res.json({ success: false });
