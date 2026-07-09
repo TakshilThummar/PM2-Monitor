@@ -4,100 +4,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PM2 Monitor Dashboard</title>
+  <title>PM2 Monitor | Enterprise Dashboard</title>
+  <meta name="description" content="Professional PM2 process monitor dashboard for real-time log streaming and service management.">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-  <div class="dashboard">
-    <header class="header">
-      <div class="header-content">
-        <div class="logo">
-          <i class="fas fa-server"></i>
-          <h1>PM2 Monitor</h1>
-        </div>
-        <div class="status-indicator">
-          <span class="status-dot"></span>
-          <span>Connected</span>
+
+  <!-- ── Header ──────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-microchip"></i>
+        <h1>PM2 <span>Monitor</span></h1>
+      </div>
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span>Connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Layout ─────────────────────────────────── -->
+  <main class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Service Selection -->
+      <div class="glass-panel">
+        <p class="section-title">Service Selection</p>
+        <div class="custom-dropdown" id="serviceDropdownContainer">
+          <div class="dropdown-selected" id="serviceDropdown">
+            <span class="selected-text">Choose a microservice...</span>
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </div>
+          <div class="dropdown-options" id="serviceOptions">
+            <div class="dropdown-option">
+              <i class="fas fa-spinner fa-spin"></i>
+              <span>Loading services...</span>
+            </div>
+          </div>
         </div>
       </div>
-    </header>
 
-    <main class="main-content">
-      <div class="control-panel">
-        <div class="control-group">
-          <div class="custom-dropdown">
-            <label class="dropdown-label">
-              <i class="fas fa-cogs"></i>
-              Select Service
-            </label>
-            <div class="dropdown-container">
-              <div class="dropdown-selected" id="serviceDropdown">
-                <span class="selected-text">Choose a service...</span>
-                <i class="fas fa-chevron-down dropdown-arrow"></i>
-              </div>
-              <div class="dropdown-options" id="serviceOptions"
-                style="z-index: 999999 !important; position: absolute !important; top: calc(100% + 8px) !important; bottom: auto !important;">
-                <div class="dropdown-option" data-value="">Choose a service...</div>
-              </div>
+      <!-- Log Type Toggle -->
+      <div class="glass-panel">
+        <p class="section-title">Log Stream Type</p>
+        <div class="segmented-control">
+          <label class="radio-option">
+            <input type="radio" name="logType" value="out" checked>
+            <div class="radio-btn">
+              <i class="fas fa-stream"></i>
+              <span>Access</span>
             </div>
-          </div>
-
-          <div class="radio-group-container">
-            <label class="dropdown-label">
-              <i class="fas fa-file-alt"></i>
-              Log Type
-            </label>
-            <div class="custom-radio-group">
-              <label class="radio-option">
-                <input type="radio" name="logType" value="out" checked>
-                <div class="radio-btn">
-                  <i class="fas fa-list"></i>
-                  <span>Access Log</span>
-                </div>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="logType" value="error">
-                <div class="radio-btn">
-                  <i class="fas fa-exclamation-triangle"></i>
-                  <span>Error Log</span>
-                </div>
-              </label>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="logType" value="error">
+            <div class="radio-btn">
+              <i class="fas fa-bug"></i>
+              <span>Error</span>
             </div>
-          </div>
+          </label>
         </div>
+      </div>
 
-        <div class="action-buttons">
+      <!-- Process Controls -->
+      <div class="glass-panel">
+        <p class="section-title">Process Controls</p>
+        <div class="action-grid">
           <button class="btn btn-primary" id="restartButton">
-            <i class="fas fa-redo"></i>
-            Restart Service
+            <i class="fas fa-power-off"></i>
+            Restart
           </button>
-          <button class="btn btn-secondary" id="flushButton">
-            <i class="fas fa-broom"></i>
-            Flush Logs
+          <button class="btn btn-danger" id="flushButton">
+            <i class="fas fa-trash-alt"></i>
+            Flush
           </button>
         </div>
       </div>
 
-      <div class="log-viewer">
-        <div class="log-header">
-          <div class="log-title">
-            <i class="fas fa-terminal"></i>
-            <span id="logTitle">Console Output</span>
-          </div>
-          <div class="log-controls">
-            <button class="btn-icon" id="downloadLogBtn" title="Download Logs">
-              <i class="fas fa-download"></i>
-            </button>
-          </div>
+    </aside>
+
+    <!-- Log Viewer -->
+    <section class="log-viewer-container glass-panel">
+      <div class="log-header">
+        <div class="log-title">
+          <i class="fas fa-terminal"></i>
+          <span id="logTitle">System Console</span>
+        </div>
+        <div class="log-controls">
+          <button class="btn-icon" id="downloadLogBtn" title="Export Logs">
+            <i class="fas fa-download"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="console-wrapper">
+        <div class="console-topbar">
+          <span class="console-dot red"></span>
+          <span class="console-dot amber"></span>
+          <span class="console-dot green"></span>
         </div>
         <div class="console">
-          <pre id="logContent">Select a service to view logs...</pre>
+          <pre id="logContent">Initializing connection...
+Waiting for service selection to stream logs.</pre>
         </div>
       </div>
-    </main>
-  </div>
+    </section>
+
+  </main>
 
   <script src="script.js"></script>
 </body>
